@@ -32,3 +32,5 @@ buildlog
 /omnisharp*.tar.gz
 /tools
 dnvminstall.sh
+*.dotnet
+*.build

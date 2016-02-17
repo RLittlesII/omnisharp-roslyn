@@ -1,7 +1,7 @@
 // ADDINS
 
 // TOOLS
-#tool "xunit.runner.console"
+// #tool "xunit.runner.console"
 
 // ARGUMENTS
 var target = Argument("target", "Default");
@@ -29,19 +29,18 @@ Action<string> SetRuntime = (runtime) =>
     {
         Arguments = new ProcessArgumentBuilder().Append("use {0} -r {1}", dnxRuntime, runtime)
     };
+    Information("Setting dnx run time: {0}", runtime);
     using(var process = StartAndReturnProcess("dnvm.sh", processSettings))
     {
         process.WaitForExit();
-        Information("dnvm setup complete.");
     }
 };
 
 Action<string, string> Test = (project, runtime) =>
 {
-    //Information(MakeAbsolute(Directory(project)));
     var processSettings = new ProcessSettings
     {
-        Arguments = new ProcessArgumentBuilder().Append(string.Format("-p {0} test -parallel none", MakeAbsolute(Directory(project))))
+        Arguments = new ProcessArgumentBuilder().Append(string.Format("test -parallel none", MakeAbsolute(Directory(project))))
     };
     
     SetRuntime(runtime);
@@ -53,8 +52,9 @@ Action<string, string> Test = (project, runtime) =>
     using(var process = StartAndReturnProcess("dnx", processSettings))
     {
         process.WaitForExit();
-        Information("dnx tests setup complete.");
     }
+    Information("Setting working directory: {0}", workingDirectory);
+    System.IO.Directory.SetCurrentDirectory(workingDirectory);
 };
 
 Action<string, string, string, string, string> Publish = (project, version, runtime, destination, tar) => 
@@ -75,7 +75,6 @@ Action<string, string, string, string, string> Publish = (project, version, runt
     //TODO: Zip Files
 };
 
-
 Action<string> Pack = (project) =>
 {
     var dnuPackSettings = new DNUPackSettings
@@ -93,10 +92,7 @@ Action<string> Pack = (project) =>
     DNUPack(project, dnuPackSettings);
 };
 
-
-
 // TASKS
-
 Task("Environment")
     .Does(() =>
     {
@@ -160,8 +156,17 @@ Task("Test")
     //.IsDependentOn("Clean")
     //.IsDependentOn("Restore")
     .Does(() =>
-    {   Information("This is only a test");
-        Test("./tests/OmniSharp.Bootstrap.Tests", "coreclr");
+    {       
+        // Get project.json files from tests directory
+        // foreach over project array
+        // deserialize to dynamic type
+        // execute test
+        
+        foreach(var folder in System.IO.Directory.GetDirectories("./tests"))
+        {
+            Test(folder, "coreclr");
+            Test(folder, "mono");
+        }
     });
     
 Task("Build")
@@ -173,18 +178,21 @@ Task("Build")
 Task("Patch")
     .Does(() => 
     {
+        
     });
 
 Task("Package")
     .IsDependentOn("Test")
     .Does(() => 
     {
+        
     });
 
 Task("Publish")
     .IsDependentOn("Test")
     .Does(() => 
     {
+        
     });
 
 Task("Default")
