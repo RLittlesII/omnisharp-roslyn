@@ -30,3 +30,5 @@ buildlog
 /.vs
 *.lock.json
 /omnisharp*.tar.gz
+/tools
+dnvminstall.sh
