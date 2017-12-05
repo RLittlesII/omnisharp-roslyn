@@ -1,7 +1,9 @@
 using System;
-using OmniSharp.Extensions.LanguageServer.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Models;
 using OmniSharp.Models.Diagnostics;
+using OmniSharp.Models.V2;
+using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
 namespace OmniSharp.LanguageServerProtocol
 {
@@ -48,10 +50,13 @@ namespace OmniSharp.LanguageServerProtocol
                 {
                     case Microsoft.CodeAnalysis.DiagnosticSeverity.Error:
                         return DiagnosticSeverity.Error;
+
                     case Microsoft.CodeAnalysis.DiagnosticSeverity.Hidden:
                         return DiagnosticSeverity.Hint;
+
                     case Microsoft.CodeAnalysis.DiagnosticSeverity.Info:
                         return DiagnosticSeverity.Information;
+
                     case Microsoft.CodeAnalysis.DiagnosticSeverity.Warning:
                         return DiagnosticSeverity.Warning;
                 }
@@ -95,12 +100,30 @@ namespace OmniSharp.LanguageServerProtocol
             return new Position(location.line, location.column);
         }
 
-        public static Range ToRange((int column, int line) start, (int column, int line) end)
+        public static Range ToRange((long column, long line) start, (long column, long line) end)
         {
             return new Range()
             {
                 Start = new Position(start.line, start.column),
                 End = new Position(end.line, end.column)
+            };
+        }
+
+        public static Models.V2.Range ToRange(Range range)
+        {
+            return new Models.V2.Range
+            {
+                Start = ToPoint(range.Start),
+                End = ToPoint(range.End)
+            };
+        }
+
+        public static Point ToPoint(Position position)
+        {
+            return new Point
+            {
+                Line = Convert.ToInt32(position.Line),
+                Column = Convert.ToInt32(position.Character)
             };
         }
     }

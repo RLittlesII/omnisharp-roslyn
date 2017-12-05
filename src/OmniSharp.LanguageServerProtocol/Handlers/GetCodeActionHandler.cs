@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OmniSharp.Extensions.JsonRpc;
-using OmniSharp.Extensions.LanguageServer.Capabilities.Client;
-using OmniSharp.Extensions.LanguageServer.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Models.CodeAction;
 
 namespace OmniSharp.LanguageServerProtocol.Handlers
@@ -38,7 +37,7 @@ namespace OmniSharp.LanguageServerProtocol.Handlers
                 SelectionStartLine = Convert.ToInt32(request.Range.Start.Line),
                 SelectionStartColumn = Convert.ToInt32(request.Range.Start.Character),
                 SelectionEndLine = Convert.ToInt32(request.Range.End.Line),
-                SelectionEndColumn = Convert.ToInt32(request.Range.End.Line),
+                SelectionEndColumn = Convert.ToInt32(request.Range.End.Character),
                 Line = Convert.ToInt32(request.Range.Start.Line),
                 Column = Convert.ToInt32(request.Range.Start.Character),
                 CodeAction = request.Context.Diagnostics.Count(),

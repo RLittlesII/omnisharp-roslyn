@@ -1,26 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OmniSharp.Extensions.JsonRpc;
-using OmniSharp.Extensions.LanguageServer.Abstractions;
-using OmniSharp.Extensions.LanguageServer.Capabilities.Client;
-using OmniSharp.Extensions.LanguageServer.Capabilities.Server;
-using OmniSharp.Extensions.LanguageServer.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol;
-using OmniSharp.Extensions.LanguageServer.Protocol.Document;
-using OmniSharp.Mef;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 using OmniSharp.Models;
 using OmniSharp.Models.FileClose;
 using OmniSharp.Models.FileOpen;
 using OmniSharp.Models.UpdateBuffer;
-using OmniSharp.Roslyn;
 
 namespace OmniSharp.LanguageServerProtocol.Handlers
 {
-    class TextDocumentSyncHandler : ITextDocumentSyncHandler, IWillSaveTextDocumentHandler, IWillSaveWaitUntilTextDocumentHandler
+    internal class TextDocumentSyncHandler : ITextDocumentSyncHandler, IWillSaveTextDocumentHandler, IWillSaveWaitUntilTextDocumentHandler
     {
         public static IEnumerable<IJsonRpcHandler> Enumerate(
             RequestHandlers handlers,
@@ -41,6 +36,7 @@ namespace OmniSharp.LanguageServerProtocol.Handlers
 
         // TODO Make this configurable?
         private readonly DocumentSelector _documentSelector;
+
         private SynchronizationCapability _capability;
         private readonly Mef.IRequestHandler<FileOpenRequest, FileOpenResponse> _openHandler;
         private readonly Mef.IRequestHandler<FileCloseRequest, FileCloseResponse> _closeHandler;

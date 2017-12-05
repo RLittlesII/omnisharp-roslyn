@@ -1,24 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OmniSharp.Extensions.JsonRpc;
-using OmniSharp.Extensions.LanguageServer.Capabilities.Client;
-using OmniSharp.Extensions.LanguageServer.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol;
-using OmniSharp.Mef;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Models.AutoComplete;
-using OmniSharp.Models.TypeLookup;
 
 namespace OmniSharp.LanguageServerProtocol.Handlers
 {
-    class CompletionHandler : ICompletionHandler
+    internal class CompletionHandler : ICompletionHandler
     {
         public static IEnumerable<IJsonRpcHandler> Enumerate(RequestHandlers handlers)
         {
-
             foreach (var (selector, handler) in handlers
                 .OfType<Mef.IRequestHandler<AutoCompleteRequest, IEnumerable<AutoCompleteResponse>>>())
                 if (handler != null)
@@ -62,7 +57,7 @@ namespace OmniSharp.LanguageServerProtocol.Handlers
             {
                 return CompletionItemKind.Property;
             }
-            if(_kind.TryGetValue(key, out var completionItemKind))
+            if (_kind.TryGetValue(key, out var completionItemKind))
             {
                 return completionItemKind;
             }
@@ -92,7 +87,8 @@ namespace OmniSharp.LanguageServerProtocol.Handlers
             var completions = new Dictionary<string, List<CompletionItem>>();
             foreach (var response in omnisharpResponse)
             {
-                var completionItem = new CompletionItem {
+                var completionItem = new CompletionItem
+                {
                     Label = response.CompletionText,
                     Detail = !string.IsNullOrEmpty(response.ReturnType) ?
                             response.DisplayText :
@@ -102,7 +98,7 @@ namespace OmniSharp.LanguageServerProtocol.Handlers
                     InsertText = response.CompletionText,
                 };
 
-                if(!completions.ContainsKey(completionItem.Label))
+                if (!completions.ContainsKey(completionItem.Label))
                 {
                     completions[completionItem.Label] = new List<CompletionItem>();
                 }
